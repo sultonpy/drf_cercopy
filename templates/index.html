@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RentCar — avtomobil ijarasi</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+  <header class="hdr">
+    <div class="wrap hdr-in">
+      <a href="#/" class="logo">Rent<b>Car</b></a>
+      <nav id="nav"></nav>
+      <div class="hdr-r">
+        <a class="tel" href="tel:+998918258181">+998 91 825 81 81</a>
+          <a class="telegram" href="https://t.me/+998918258181" target="_blank">Telegram</a>
+        <div class="lang"><button data-l="uz">UZ</button><button data-l="ru">RU</button></div>
+      </div>
+    </div>
+  </header>
+  <main id="app" class="wrap"></main>
+  <footer><div class="wrap">© RentCar · <span id="ft"></span></div></footer>
+  <script src="{% static 'apps.js' %}"></script>
+</body>
+</html>
