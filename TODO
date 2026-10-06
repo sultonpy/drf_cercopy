@@ -1,0 +1,14 @@
+http://localhost:8000/api/docs/
+http://localhost:8000/api/payments/octo/notify/
+http://localhost:8000/api/auth/token/
+http://localhost:8000/api/bookings/quote/
+http://localhost:8000/admin/
+http://localhost:8000/api/
+http://localhost:8000/
+cd /path/to/project
+git init
+git branch -M main
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/sultonpy/REPO_NAME.git
+git push -u origin main

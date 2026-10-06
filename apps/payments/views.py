@@ -11,7 +11,6 @@ from . import octo
 
 class OctoNotifyView(APIView):
 
-    """Octo webhook. Live rejimda ham aynan shu view ishlaydi."""
     authentication_classes = []
     permission_classes = []
 
@@ -60,16 +59,14 @@ class OctoNotifyView(APIView):
                         {"detail": "bad hash_key"},
                         status=400,
                     )
-            # 1) OCTO serveridan haqiqiy statusni tekshiramiz
             try:
                 octo_data = octo.verify_payment_status(tx)
             except Exception:
                 return Response(
-                    {"detail": "OCTO statusini tekshirib bo'lmadi"},
+                    {"detail": "OCTO statusini tekshirib bolmadi"},
                     status=502,
                 )
 
-            # OCTO qaytargan payment UUID bizdagi payment bilan bir xil bo'lishi kerak
             if str(octo_data.get("octo_payment_UUID", "")) != octo_uuid:
                 return Response(
                     {"detail": "payment UUID mismatch"},
@@ -78,11 +75,9 @@ class OctoNotifyView(APIView):
 
             verified_status = octo_data.get("status")
 
-            # 2) takroriy webhook — idempotent
             if p.status != Payment.Status.CREATED:
                 return Response({"ok": True})
 
-            # 3) summa mosligi
             total_sum = n.get("total_sum")
 
             if total_sum is not None:

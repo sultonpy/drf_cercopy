@@ -185,7 +185,30 @@ async function bookPage(id) {
       <div class="box sum" id="sum"></div>
     </div>`;
 
+  const phoneInput = $("#cphone");
+
+  phoneInput.addEventListener("input", () => {
+  let digits = phoneInput.value.replace(/\D/g, "");
+
+  // Foydalanuvchi +998 ni ham yozsa, uni alohida olib tashlaymiz
+  if (digits.startsWith("998")) {
+    digits = digits.slice(3);
+  }
+
+  // Faqat 9 ta raqam
+  digits = digits.slice(0, 9);
+
+  let formatted = "+998";
+
+  if (digits.length > 0) formatted += " " + digits.slice(0, 2);
+  if (digits.length > 2) formatted += " " + digits.slice(2, 5);
+  if (digits.length > 5) formatted += " " + digits.slice(5, 7);
+  if (digits.length > 7) formatted += " " + digits.slice(7, 9);
+
+  phoneInput.value = formatted;
+});
   const quoteBody = () => ({
+
     car: car.id, start_at: $("#start").value, end_at: $("#end").value,
     pickup_location: +$("#pickup").value, return_location: +$("#ret").value,
     extras: [...document.querySelectorAll(".exq")].map(i => ({ code: i.dataset.code, qty: +i.value })).filter(e => e.qty > 0),
@@ -210,6 +233,43 @@ async function bookPage(id) {
   };
   async function submit() {
     const btn = $("#pay"), msg = $("#msg"); msg.textContent = ""; btn.disabled = true;
+    const name = $("#cname").value.trim();
+    const phone = $("#cphone").value.trim();
+
+    if (!name) {
+      msg.textContent = "Ismingizni kiriting.";
+      btn.disabled = false;
+      $("#cname").focus();
+    return;
+    }
+
+    if (name.length < 3) {
+      msg.textContent = "Ism kamida 3 ta harfdan iborat bo‘lishi kerak.";
+      btn.disabled = false;
+      $("#cname").focus();
+    return;
+    }
+
+    if (!/^[A-Za-zА-Яа-яЁёЎўҚқҒғҲҳʼ' -]+$/.test(name)) {
+      msg.textContent = "Ism faqat harflardan iborat bo‘lishi kerak.";
+      btn.disabled = false;
+      $("#cname").focus();
+    return;
+    }
+
+    if (!phone) {
+      msg.textContent = "Telefon raqamini kiriting.";
+      btn.disabled = false;
+      $("#cphone").focus();
+    return;
+    }
+
+    if (!/^\+998\d{9}$/.test(phone.replace(/[\s()-]/g, ""))) {
+      msg.textContent = "Telefon +998 bilan boshlanishi va 9 ta raqamdan iborat bo‘lishi kerak.";
+      btn.disabled = false;
+      $("#cphone").focus();
+    return;
+    }
     try {
       const d = await post("bookings/", {
         ...quoteBody(), customer_name: $("#cname").value.trim(),
@@ -247,7 +307,7 @@ async function blogPage(slug) {
 // ---------- router ----------
 const routes = [
   [/^(#\/?)?$/, home], [/^#\/car\/(\d+)$/, carPage], [/^#\/book\/(\d+)$/, bookPage],
-  [/^#\/payment\/([0-9a-fA-F-]{36})$/, paymentPage], [/^#\/conditions$/, condPage], [/^#\/blog\/([\w-]+)$/, blogPage],
+  [/^#\/payment\/([0-9a-fA-F-]{36})(?:\?.*)?$/, paymentPage], [/^#\/conditions$/, condPage], [/^#\/blog\/([\w-]+)$/, blogPage],
 ];
 async function route() {
   const h = location.hash;
